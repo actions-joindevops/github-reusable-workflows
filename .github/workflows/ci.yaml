@@ -58,7 +58,7 @@ jobs:
       - name: Checkout Deploy
         uses: actions/checkout@v4
         with:
-          repository: DAWS-82S/${{inputs.project_name}}-deploy
+          repository: DAWS-82S/${{inputs.project_name}}-deploy@main
 
       - name: Check files
         run: ls -l
