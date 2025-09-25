@@ -39,12 +39,14 @@ jobs:
   Docker-Build:
     runs-on: self-hosted
     needs: Download-Dependencies
+    env:
+      IMAGE_TAG: "${{ needs.Download-Dependencies.outputs.version }}"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Docker Build
         run: |
-          docker build -t 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${GITHUB_SHA} .
+          docker build -t 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${$IMAGE_TAG} .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -58,8 +60,10 @@ jobs:
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160885265516.dkr.ecr.us-east-1.amazonaws.com
           docker push 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${GITHUB_SHA}
   Deploy:
+    needs: Download-Dependencies
+    env:
+      IMAGE_TAG: "${{ needs.Download-Dependencies.outputs.version }}"
     runs-on: self-hosted
-    needs: Docker-Build
     steps:
       - name: Checkout Deploy
         uses: actions/checkout@v4
@@ -79,4 +83,5 @@ jobs:
           aws eks update-kubeconfig --region us-east-1 --name roboshop-dev
           kubectl get nodes
           cd helm
+          sed -i 's/IMAGE_TAG/${IMAGE_TAG}' values-dev.yaml
           helm upgrade --install backend -f values-dev.yaml .
