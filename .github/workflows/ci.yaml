@@ -70,7 +70,7 @@ jobs:
       - name: Checkout Deploy
         uses: actions/checkout@v4
         with:
-          repository: DAWS-82S/backend-deploy
+          repository: actions-joindevops/backend-deploy
 
       - name: Check files
         run: ls -l
