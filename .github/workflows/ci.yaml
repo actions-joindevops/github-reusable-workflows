@@ -11,6 +11,9 @@ on:
       app_type:
         required: true
         type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:     { required: true }
+      AWS_SECRET_ACCESS_KEY: { required: true }
 jobs:
   Download-Dependencies:
     runs-on: self-hosted
@@ -36,7 +39,13 @@ jobs:
       - name: Docker Build
         run: |
           docker build -t 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${GITHUB_SHA} .
-    
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
       - name: Docker Push
         run: |
