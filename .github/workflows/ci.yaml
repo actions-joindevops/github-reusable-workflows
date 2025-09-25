@@ -51,7 +51,10 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 160885265516.dkr.ecr.us-east-1.amazonaws.com
           docker push 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${GITHUB_SHA}
-
+  Deploy:
+    runs-on: self-hosted
+    needs: Docker-Build
+    steps:
       - name: Checkout Deploy
         uses: actions/checkout@v4
         with:
