@@ -21,6 +21,8 @@ jobs:
           elif [ ${{inputs.app_type}} == maven ]; then
             mvn package
           fi
+      - name: Check files
+        run: ls -l
 
   Test:
     runs-on: self-hosted
