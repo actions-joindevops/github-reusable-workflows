@@ -5,6 +5,9 @@ on:
       component_name:
         required: true
         type: string
+      project_name:
+        required: true
+        type: string
       app_type:
         required: true
         type: string
@@ -24,13 +27,12 @@ jobs:
       - name: Check files
         run: ls -l
 
-  Test:
+  Docker-Build:
     runs-on: self-hosted
     needs: Download-Dependencies
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: echo Unit Tests
-        name: Unit Tests
-      - run: echo Integration Tests
-        name: Integration Tests
+      - name: Docker Build
+        run: |
+          docker build -t 160885265516.dkr.ecr.us-east-1.amazonaws.com/${{inputs.project_name}}/${{inputs.component_name}}:${GITHUB_SHA} .
